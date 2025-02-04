@@ -12,6 +12,7 @@
         <module>cs-design-pattern</module>
         <module>cs-leetcode</module>
         <module>cs-jvm</module>
+        <module>cs-concurrence</module>
     </modules>
 
 
