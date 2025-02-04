@@ -2,7 +2,9 @@ package com.sciencefl.flynn.concurrence;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.CompletionService;
+import java.util.concurrent.ExecutorCompletionService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -20,7 +22,6 @@ public class BlockQueue<T> {
     void enqueue(T element) throws InterruptedException {
         Executors.newFixedThreadPool(3);
         CompletionService completionService = new ExecutorCompletionService();
-        FutureTask<String> futureTask = new FutureTask<String>(new Callable<String>() {})>
         try{
             lock.lock();
             // 对于 MESA 管程来说，有一个编程范式
