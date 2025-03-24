@@ -20,6 +20,7 @@ public class DecorateRecord {
             }
             res.add(tmp);
         }
+
         return res;
     }
 }
