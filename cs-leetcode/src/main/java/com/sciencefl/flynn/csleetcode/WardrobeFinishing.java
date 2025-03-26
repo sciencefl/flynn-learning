@@ -1,5 +1,8 @@
 package com.sciencefl.flynn.csleetcode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class WardrobeFinishing {
     int count =0;
     public int wardrobeFinishing(int m, int n, int cnt) {
@@ -45,5 +48,12 @@ public class WardrobeFinishing {
         WardrobeFinishing wardrobeFinishing = new WardrobeFinishing();
         int result = wardrobeFinishing.digit(15);
         System.out.println(result);
+        List<Integer> list = new ArrayList<>();
+        list.add(1);
+        list.add(null);
+        list.add(2);
+        list.add(null);
+        list.add(3);
+
     }
 }
