@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+    <!-- 定义公共属性 -->
+    <springProperty name="LOG_DIR" source="logging.file.path" defaultValue="/opt/ssc/union-pay-adapter/logs/app"/>
+    <springProperty name="DEFAULT_HISTORY" source="logging.file.max-history" defaultValue="30"/>
+    <springProperty name="UNION_PAY_REQUEST_HISTORY" source="logging.file.max-history" defaultValue="90"/>
+    <!-- 添加日志过滤器 -->
+    <conversionRule conversionWord="msg"
+                    converterClass="ch.qos.logback.classic.pattern.MessageConverter" />
+    <!-- 控制台输出 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %highlight(%-5level) %logger{100} - %replace(%msg){'(password=|secret=|token=|password:)[^,]*', '*****'}%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 普通日志文件默认配置 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/union-pay-adapter.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{100} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/archived/union-pay-adapter.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxHistory>${DEFAULT_HISTORY}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+    <!-- 银联请求日志文件配置 -->
+    <appender name="UNION_PAY_REQUEST_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/union-pay-request.log</file>
+        <encoder>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{100} - %replace(%msg){'(password=|secret=|token=)[^,]*', '*****'}%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/archived/union-pay-request.%d{yyyy-MM-dd}.%i.log.gz</fileNamePattern>
+            <maxHistory>${UNION_PAY_REQUEST_HISTORY}</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 异步日志配置 -->
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <discardingThreshold>0</discardingThreshold>
+        <appender-ref ref="FILE"/>
+    </appender>
+    <logger name="com.sciencefl.flynn.controller.BatchController" level="INFO" additivity="true">
+        <appender-ref ref="UNION_PAY_REQUEST_FILE"/>
+    </logger>
+
+    <!-- 生产环境专用配置 -->
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="ASYNC"/>
+        </root>
+        <!-- 关闭第三方库DEBUG日志 -->
+        <logger name="org.springframework" level="WARN"/>
+        <logger name="com.thirdparty" level="ERROR"/>
+    </springProfile>
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

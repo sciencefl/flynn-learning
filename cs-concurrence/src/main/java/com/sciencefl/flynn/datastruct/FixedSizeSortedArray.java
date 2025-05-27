@@ -65,5 +65,9 @@ public class FixedSizeSortedArray {
         array.add(5);
         array.remove(3);
         array.get(3);
+        System.out.println();
+        for (int i = 0; i < array.size; i++) {
+            System.out.print(array.get(i) + " ");
+        }
     }
 }

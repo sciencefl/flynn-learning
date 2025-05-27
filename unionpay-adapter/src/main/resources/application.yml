@@ -1,0 +1,78 @@
+# 应用基础配置
+server:
+  port: 8080
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+# Spring配置
+spring:
+  application:
+    name: union-pay-adapter
+  output:
+    ansi:
+      enabled: always # 控制台输出ANSI颜色
+  data:
+    redis:
+      host: 127.0.0.1 # Redis服务器地址
+      database: 2 # Redis数据库索引（默认为0）
+      port: 6379 # Redis服务器连接端口
+      password: 123456 # Redis服务器连接密码（默认为空）
+      #username:   # Redis用户名（如果Redis版本支持ACL）,生产环境应该启用
+      timeout: 3000ms # 连接超时时间（毫秒）
+      lettuce:
+        pool:
+          max-active: 1000 # 连接池最大连接数（使用负值表示没有限制） 默认 8
+          max-wait: 1000 # 连接池最大阻塞等待时间（使用负值表示没有限制） 默认 -1
+          max-idle: 1000 # 连接池中的最大空闲连接 默认 8
+          min-idle: 0 # 连接池中的最小空闲连接 默认 0
+
+#  datasource:
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://10.0.70.54:32030/ssc_ctid_console_v2_1?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&enabledTLSProtocols=TLSv1.2
+#    username: dev
+#    password: devAtdev
+#mybatis-plus:
+#  mapper-locations: classpath:/mapper/*.xml
+#  global-config:
+#    db-config:
+#      id-type: auto
+#  configuration:
+#    auto-mapping-behavior: partial
+#    map-underscore-to-camel-case: true
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#
+## 自定义配置
+#unionpay:
+#  topics:
+#    apply: topic_apply
+#    use: topic_use
+#    refund: topic_refund
+#    return: topic_return
+#  request-id-ttl: 86400 # 24小时
+rocketmq:
+  name-server: 127.0.0.1:9876 # RocketMQ NameServer地址
+  producer:
+    group: union-pay-producer-group # 生产者组名称
+    send-message-timeout: 3000 # 发送消息超时时间
+    retry-times-when-send-failed: 3 # 失败重试
+    max-message-size: 4194304 # 4MB
+    access-key:   # RocketMQ Access Key
+    secret-key:   # RocketMQ
+  consumer:
+    group: union-pay-consumer-group # 消费者组名称
+    topic: union-pay-topic # 消费主题
+    message-model: CLUSTERING # 消息模型
+    pull-batch-size: 32 # 批量拉取[4](@ref)
+app:
+  jwt:
+    secret: unionpay@2024#secretkey
+    expiration-ms: 3600000
+  api-key-header: X-API-KEY
+  api-keys:
+    - app-name: union-pay
+      api-key: 123456
+      scopes:
+        - push_batchdata
