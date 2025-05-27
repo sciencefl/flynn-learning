@@ -55,6 +55,7 @@
         <appender-ref ref="UNION_PAY_REQUEST_FILE"/>
     </logger>
 
+<!--    "java -jar app.jar &#45;&#45;spring.profiles.active=prod"-->
     <!-- 生产环境专用配置 -->
     <springProfile name="prod">
         <root level="INFO">

@@ -2,6 +2,7 @@ package com.sciencefl.flynn.controller;
 
 
 import cn.hutool.json.JSONUtil;
+import com.sciencefl.flynn.aspect.AntiReplay;
 import com.sciencefl.flynn.common.BaseResponse;
 import com.sciencefl.flynn.dto.ApplyDTO;
 import com.sciencefl.flynn.dto.BaseRequest;
@@ -26,6 +27,7 @@ public class BatchController {
     @Autowired
     ProducerService producerService;
 
+    @AntiReplay(expireTime = 60)  // 60秒内禁止重复请求
     @PreAuthorize("hasAuthority('SCOPE_push_batchdata')")
     @PostMapping("/push_data")
     public BaseResponse<String> createBatch( @Valid @RequestBody BaseRequest baseDTO) {

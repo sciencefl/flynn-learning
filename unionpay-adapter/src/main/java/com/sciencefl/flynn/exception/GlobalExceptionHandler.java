@@ -2,6 +2,7 @@ package com.sciencefl.flynn.exception;
 
 
 import com.sciencefl.flynn.common.BaseResponse;
+import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,5 +26,9 @@ public class GlobalExceptionHandler {
     public BaseResponse<Void> handleBusinessException(BusinessException exception) {
         // 返回业务异常信息
         return BaseResponse.failed(exception.getCode(),  exception.getMessage());
+    }
+    @ExceptionHandler(AntiRePlayException.class)
+    public BaseResponse<Void> handleReplayException(RuntimeException e) {
+        return BaseResponse.failed(HttpStatus.TOO_MANY_REQUESTS.value(),HttpStatus.TOO_MANY_REQUESTS.getReasonPhrase()+e.getMessage());
     }
 }
