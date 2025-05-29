@@ -1,12 +1,15 @@
 package com.sciencefl.flynn.config;
 
 
-import com.sciencefl.flynn.filter.ApiKeyAuthFilter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sciencefl.flynn.common.Result;
+import com.sciencefl.flynn.common.ResultCode;
 import com.sciencefl.flynn.filter.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -53,10 +56,7 @@ public class SecurityConfig {
 
     @Autowired
     private  JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private  ApiKeyAuthFilter apiKeyAuthFilter;
-
+    private final ObjectMapper objectMapper;
     /**
      * 最终的执行顺序： JwtAuthFilter → apiKeyAuthFilter → UsernamePasswordAuthenticationFilter
      * @param http
@@ -65,21 +65,34 @@ public class SecurityConfig {
      */
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // TODO 1. 密钥相关的加密，2. 用户信息应从后端存储中那，而不是硬编码在代码中，3. 防重放相关的加入
+        // TODO 1. 密钥相关的加密，2. 用户信息应从后端存储中，而不是硬编码在代码中。
         http
                 .csrf(csrf -> csrf.disable())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/ssc/auth/token").permitAll()
-                        // 所有匹配这个路径的请求都不需要认证，但需要经过下面的过滤器
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(apiKeyAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(new JwtAuthFilter(jwtTokenProvider), ApiKeyAuthFilter.class)
+                .addFilterBefore(new JwtAuthFilter(jwtTokenProvider),
+                        UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(ex -> ex
-                       //  .authenticationEntryPoint(new JwtAuthenticationEntryPoint())
-                         .accessDeniedHandler(new JwtAccessDeniedHandler())
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.setCharacterEncoding("UTF-8");
+                            response.setStatus(ResultCode.UNAUTHORIZED.getCode());
+                            Result<?> result = Result.error(ResultCode.UNAUTHORIZED);
+                            response.getWriter().write(objectMapper.writeValueAsString(result));
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+                            response.setCharacterEncoding("UTF-8");
+                            response.setStatus(ResultCode.FORBIDDEN.getCode());
+                            Result<?> result = Result.error(ResultCode.FORBIDDEN);
+                            response.getWriter().write(objectMapper.writeValueAsString(result));
+                        })
                 );
+
         return http.build();
     }
 }

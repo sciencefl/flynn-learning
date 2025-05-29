@@ -1,0 +1,11 @@
+package com.sciencefl.flynn.service;
+
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.sciencefl.flynn.entity.UnionPayApply;
+import com.sciencefl.flynn.mapper.UnionPayApplyMapper;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UnionPayApplyService extends ServiceImpl<UnionPayApplyMapper, UnionPayApply> {
+    // 已经可以使用各种内置的 CRUD 方法
+}

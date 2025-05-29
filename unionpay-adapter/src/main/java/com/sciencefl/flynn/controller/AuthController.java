@@ -1,13 +1,14 @@
 package com.sciencefl.flynn.controller;
 
 
-import com.sciencefl.flynn.common.BaseResponse;
+import com.sciencefl.flynn.common.Result;
+import com.sciencefl.flynn.common.ResultCode;
 import com.sciencefl.flynn.config.ApiKeyModel;
 import com.sciencefl.flynn.config.ApiKeysConfig;
 import com.sciencefl.flynn.config.JwtTokenProvider;
+import com.sciencefl.flynn.exception.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,8 +22,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/ssc/auth")
 public class AuthController {
 
-//    @Value("#{'${app.api-keys}'.split(',')}")
-//    private List<String> validApiKeys;
     @Autowired
     private ApiKeysConfig apiModels;
 
@@ -30,19 +29,24 @@ public class AuthController {
     private JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/token")
-    public BaseResponse<? extends Object> getToken(@RequestHeader("X-API-KEY") String apiKey) {
-        // 验证API Key有效性（示例）
-        Map<String, ApiKeyModel> apiKeyMap = apiModels.getApiKeys().stream().collect(Collectors.toMap(ApiKeyModel::getApiKey, apiKeyModel -> apiKeyModel));
-        if (null == apiKeyMap.getOrDefault(apiKey,null)) {
-            throw new AccessDeniedException("Invalid API Key");
-        }
-        log.info("请求apikey ：{}",apiKey);
+    public Result<Map<String, Object>> getToken(@RequestHeader("X-API-KEY") String apiKey) {
+        log.info("请求apikey：{}", apiKey);
 
-        String token = jwtTokenProvider.generateToken(apiKeyMap.get(apiKey));
-        return BaseResponse.success(Map.of(
+        Map<String, ApiKeyModel> apiKeyMap = apiModels.getApiKeys().stream()
+                .collect(Collectors.toMap(ApiKeyModel::getApiKey, apiKeyModel -> apiKeyModel));
+
+        ApiKeyModel apiKeyModel = apiKeyMap.get(apiKey);
+        if (apiKeyModel == null) {
+            throw new SecurityException(ResultCode.UNAUTHORIZED, "无效的API密钥");
+        }
+
+        String token = jwtTokenProvider.generateToken(apiKeyModel);
+        Map<String, Object> response = Map.of(
                 "access_token", token,
                 "token_type", "Bearer",
                 "expires_in", jwtTokenProvider.getExpirationMs() / 1000
-        ));
+        );
+
+        return Result.success(response);
     }
 }

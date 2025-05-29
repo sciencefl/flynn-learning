@@ -3,9 +3,12 @@ package com.sciencefl.flynn.controller;
 
 import cn.hutool.json.JSONUtil;
 import com.sciencefl.flynn.aspect.AntiReplay;
-import com.sciencefl.flynn.common.BaseResponse;
+import com.sciencefl.flynn.common.Result;
+import com.sciencefl.flynn.common.ResultCode;
 import com.sciencefl.flynn.dto.ApplyDTO;
 import com.sciencefl.flynn.dto.BaseRequest;
+import com.sciencefl.flynn.exception.BusinessException;
+import com.sciencefl.flynn.exception.ValidationException;
 import com.sciencefl.flynn.service.mq.ProducerService;
 import com.sciencefl.flynn.util.ValidationUtil;
 import jakarta.validation.Valid;
@@ -28,20 +31,41 @@ public class BatchController {
     ProducerService producerService;
 
     @AntiReplay(expireTime = 60)  // 60秒内禁止重复请求
-    @PreAuthorize("hasAuthority('SCOPE_push_batchdata')")
+    @PreAuthorize("hasAuthority('SCOPE_push_batchdata')") // 需要在配置文件中定义SCOPE_push_batchdata权限
     @PostMapping("/push_data")
-    public BaseResponse<String> createBatch( @Valid @RequestBody BaseRequest baseDTO) {
-        if(baseDTO.getOperation().equals("APPLY")){
-            String jsonStr = JSONUtil.toJsonStr(baseDTO.getData());
-            List<ApplyDTO> list =  JSONUtil.toList(jsonStr, ApplyDTO.class);
-            ValidationUtil.validate(list);
-            log.info("接收到批量数据：{}", JSONUtil.toJsonStr(list));
-            for (ApplyDTO applyDTO : list) {
-                // 这里可以添加更多的业务逻辑处理
-               producerService.sendToTopicB(applyDTO);
-            }
+    public Result<String> createBatch(@Valid @RequestBody BaseRequest baseDTO) {
+        if (!"APPLY".equals(baseDTO.getOperation())) {
+            throw new ValidationException("不支持的操作类型");
         }
 
-        return BaseResponse.success("ok");
+        List<ApplyDTO> dataList;
+        try {
+            String jsonStr = JSONUtil.toJsonStr(baseDTO.getData());
+            dataList = JSONUtil.toList(jsonStr, ApplyDTO.class);
+        } catch (Exception e) {
+            throw new ValidationException("数据格式转换失败");
+        }
+
+        if (dataList == null || dataList.isEmpty()) {
+            throw new ValidationException("批量数据不能为空");
+        }
+
+        try {
+            ValidationUtil.validate(dataList);
+        } catch (Exception e) {
+            throw new ValidationException("数据校验失败: " + e.getMessage());
+        }
+
+        log.info("接收到批量数据：{}", JSONUtil.toJsonStr(dataList));
+
+        try {
+            for (ApplyDTO applyDTO : dataList) {
+                producerService.sendToTopicB(applyDTO);
+            }
+        } catch (Exception e) {
+            throw new BusinessException(ResultCode.BUSINESS_ERROR, "消息发送失败: " + e.getMessage());
+        }
+
+        return Result.success("处理成功");
     }
 }

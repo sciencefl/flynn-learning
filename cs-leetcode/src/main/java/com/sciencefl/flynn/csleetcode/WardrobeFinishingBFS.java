@@ -1,6 +1,8 @@
 package com.sciencefl.flynn.csleetcode;
 
-import javafx.util.Pair;
+
+
+import com.sun.tools.javac.util.Pair;
 
 import java.util.LinkedList;
 import java.util.Queue;
@@ -15,8 +17,8 @@ public class WardrobeFinishingBFS {
         int[][] directions = {{1,0},{0,1}};
         while(!queue.isEmpty()){
             Pair<Integer, Integer> kv = queue.poll();
-            int row = kv.getKey();
-            int col = kv.getValue();
+            int row = kv.fst;
+            int col = kv.snd;
             if(digit(row)+digit(col) > cnt){
                 continue;
             }

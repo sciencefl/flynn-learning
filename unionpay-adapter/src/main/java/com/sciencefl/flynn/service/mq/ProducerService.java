@@ -22,6 +22,9 @@ public class ProducerService {
         rocketMQTemplate.send("TopicB:TagB",
                 MessageBuilder.withPayload(order).setHeader(RocketMQHeaders.KEYS,order.getUserId())
                         .setHeader("businessKey", order.getUserId()).build());
+
+        // 通过消费券的id作为业务Key发送
+        // rocketMQTemplate.syncSendOrderly("order_topic", "订单创建", "ORDER_1001");
     }
 
     // 发送事务消息到第三个Topic
