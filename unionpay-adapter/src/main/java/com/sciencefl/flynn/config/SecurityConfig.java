@@ -1,20 +1,8 @@
 package com.sciencefl.flynn.config;
 
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sciencefl.flynn.common.Result;
-import com.sciencefl.flynn.common.ResultCode;
-import com.sciencefl.flynn.filter.JwtAuthFilter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * 当前 SecurityConfig 配置下，Filter 执行顺序和逻辑如下：
@@ -50,49 +38,49 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  *
  */
 @Configuration
-@EnableWebSecurity
+// @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    @Autowired
-    private  JwtTokenProvider jwtTokenProvider;
-    private final ObjectMapper objectMapper;
-    /**
-     * 最终的执行顺序： JwtAuthFilter → apiKeyAuthFilter → UsernamePasswordAuthenticationFilter
-     * @param http
-     * @return
-     * @throws Exception
-     */
-    @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // TODO 1. 密钥相关的加密，2. 用户信息应从后端存储中，而不是硬编码在代码中。
-        http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/ssc/auth/token").permitAll()
-                        .anyRequest().authenticated()
-                )
-                .addFilterBefore(new JwtAuthFilter(jwtTokenProvider),
-                        UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling(ex -> ex
-                        .authenticationEntryPoint((request, response, authException) -> {
-                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            response.setCharacterEncoding("UTF-8");
-                            response.setStatus(ResultCode.UNAUTHORIZED.getCode());
-                            Result<?> result = Result.error(ResultCode.UNAUTHORIZED);
-                            response.getWriter().write(objectMapper.writeValueAsString(result));
-                        })
-                        .accessDeniedHandler((request, response, accessDeniedException) -> {
-                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                            response.setCharacterEncoding("UTF-8");
-                            response.setStatus(ResultCode.FORBIDDEN.getCode());
-                            Result<?> result = Result.error(ResultCode.FORBIDDEN);
-                            response.getWriter().write(objectMapper.writeValueAsString(result));
-                        })
-                );
-
-        return http.build();
-    }
+//    @Autowired
+//    private  JwtTokenProvider jwtTokenProvider;
+//    private final ObjectMapper objectMapper;
+//    /**
+//     * 最终的执行顺序： JwtAuthFilter → apiKeyAuthFilter → UsernamePasswordAuthenticationFilter
+//     * @param http
+//     * @return
+//     * @throws Exception
+//     */
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        // TODO 1. 密钥相关的加密，2. 用户信息应从后端存储中，而不是硬编码在代码中。
+//        http
+//                .csrf(csrf -> csrf.disable())
+//                .sessionManagement(session ->
+//                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/api/v1/ssc/auth/token").permitAll()
+//                        .anyRequest().authenticated()
+//                )
+//                .addFilterBefore(new JwtAuthFilter(jwtTokenProvider),
+//                        UsernamePasswordAuthenticationFilter.class)
+//                .exceptionHandling(ex -> ex
+//                        .authenticationEntryPoint((request, response, authException) -> {
+//                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//                            response.setCharacterEncoding("UTF-8");
+//                            response.setStatus(ResultCode.UNAUTHORIZED.getCode());
+//                            Result<?> result = Result.error(ResultCode.UNAUTHORIZED);
+//                            response.getWriter().write(objectMapper.writeValueAsString(result));
+//                        })
+//                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+//                            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//                            response.setCharacterEncoding("UTF-8");
+//                            response.setStatus(ResultCode.FORBIDDEN.getCode());
+//                            Result<?> result = Result.error(ResultCode.FORBIDDEN);
+//                            response.getWriter().write(objectMapper.writeValueAsString(result));
+//                        })
+//                );
+//
+//        return http.build();
+//    }
 }

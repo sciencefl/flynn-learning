@@ -14,7 +14,6 @@ import com.sciencefl.flynn.util.ValidationUtil;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +30,7 @@ public class BatchController {
     ProducerService producerService;
 
     @AntiReplay(expireTime = 60)  // 60秒内禁止重复请求
-    @PreAuthorize("hasAuthority('SCOPE_push_batchdata')") // 需要在配置文件中定义SCOPE_push_batchdata权限
+    // @PreAuthorize("hasAuthority('SCOPE_push_batchdata')") // 需要在配置文件中定义SCOPE_push_batchdata权限
     @PostMapping("/push_data")
     public Result<String> createBatch(@Valid @RequestBody BaseRequest baseDTO) {
         if (!"APPLY".equals(baseDTO.getOperation())) {

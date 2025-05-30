@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-@TableName("oauth_client")
-public class OauthClient {
+@TableName("union_pay_oauth_client")
+public class UnionPayOauthClient {
     @TableId(type = IdType.AUTO)
     private Long id;
 

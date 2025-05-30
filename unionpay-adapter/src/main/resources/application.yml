@@ -73,3 +73,20 @@ app:
       api-key: 123456
       scopes:
         - push_batchdata
+sa-token:
+  # 修改token风格为jwt
+  token-style: jwt
+  # token名称
+  token-name: Authorization
+  # token有效期
+  timeout: 7200
+  # token临时有效期
+  # 是否允许同一账号多地同时登录
+  is-concurrent: true
+  # 多人登录时是否共用一个token
+  is-share: false
+  # 是否输出操作日志
+  is-log: true
+  # jwt秘钥
+
+  jwt-secret-key: unionpay@2024#secretkey

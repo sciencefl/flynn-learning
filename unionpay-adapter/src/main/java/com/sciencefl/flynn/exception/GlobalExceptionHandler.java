@@ -5,8 +5,6 @@ import com.sciencefl.flynn.common.ResultCode;
 import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,19 +41,19 @@ import java.util.stream.Collectors;
             return Result.error(ResultCode.PARAM_ERROR, errorMsg);
         }
 
-        @ExceptionHandler(AccessDeniedException.class)
-        @ResponseStatus(HttpStatus.FORBIDDEN)
-        public Result<?> handleAccessDeniedException(AccessDeniedException ex) {
-            log.warn("访问被拒绝: {}", ex.getMessage());
-            return Result.error(ResultCode.FORBIDDEN);
-        }
-
-        @ExceptionHandler(AuthenticationException.class)
-        @ResponseStatus(HttpStatus.UNAUTHORIZED)
-        public Result<?> handleAuthenticationException(AuthenticationException ex) {
-            log.warn("认证失败: {}", ex.getMessage());
-            return Result.error(ResultCode.UNAUTHORIZED);
-        }
+//        @ExceptionHandler(AccessDeniedException.class)
+//        @ResponseStatus(HttpStatus.FORBIDDEN)
+//        public Result<?> handleAccessDeniedException(AccessDeniedException ex) {
+//            log.warn("访问被拒绝: {}", ex.getMessage());
+//            return Result.error(ResultCode.FORBIDDEN);
+//        }
+//
+//        @ExceptionHandler(AuthenticationException.class)
+//        @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//        public Result<?> handleAuthenticationException(AuthenticationException ex) {
+//            log.warn("认证失败: {}", ex.getMessage());
+//            return Result.error(ResultCode.UNAUTHORIZED);
+//        }
 
         @ExceptionHandler(JwtException.class)
         @ResponseStatus(HttpStatus.UNAUTHORIZED)
