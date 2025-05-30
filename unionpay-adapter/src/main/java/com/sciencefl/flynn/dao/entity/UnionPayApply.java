@@ -1,4 +1,4 @@
-package com.sciencefl.flynn.entity;
+package com.sciencefl.flynn.dao.entity;
 
 
 import com.baomidou.mybatisplus.annotation.*;

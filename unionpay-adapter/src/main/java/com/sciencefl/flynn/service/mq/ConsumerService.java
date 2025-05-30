@@ -1,7 +1,7 @@
 package com.sciencefl.flynn.service.mq;
 
+import com.sciencefl.flynn.dao.entity.UnionPayApply;
 import com.sciencefl.flynn.dto.ApplyDTO;
-import com.sciencefl.flynn.entity.UnionPayApply;
 import com.sciencefl.flynn.service.UnionPayApplyService;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;

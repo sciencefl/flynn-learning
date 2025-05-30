@@ -1,7 +1,7 @@
-package com.sciencefl.flynn.mapper;
+package com.sciencefl.flynn.dao.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.sciencefl.flynn.entity.UnionPayApply;
+import com.sciencefl.flynn.dao.entity.UnionPayApply;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper

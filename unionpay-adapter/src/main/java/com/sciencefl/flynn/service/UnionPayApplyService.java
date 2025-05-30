@@ -1,8 +1,8 @@
 package com.sciencefl.flynn.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.sciencefl.flynn.entity.UnionPayApply;
-import com.sciencefl.flynn.mapper.UnionPayApplyMapper;
+import com.sciencefl.flynn.dao.entity.UnionPayApply;
+import com.sciencefl.flynn.dao.mapper.UnionPayApplyMapper;
 import org.springframework.stereotype.Service;
 
 @Service
