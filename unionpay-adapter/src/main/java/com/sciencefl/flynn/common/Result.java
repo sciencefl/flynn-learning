@@ -8,27 +8,38 @@ import lombok.experimental.Accessors;
 public class Result<T> {
     private Integer code;
     private String message;
+    private String detail;
     private T data;
     private long timestamp;
 
-    public Result(Integer code, String message, T data) {
-        this.code = code;
-        this.message = message;
-        this.data = data;
-        this.timestamp = System.currentTimeMillis();
+    public static <T> Result<T> success() {
+        return success(null);
     }
 
     public static <T> Result<T> success(T data) {
-        return new Result<>(ResultCode.SUCCESS.getCode(),
-                ResultCode.SUCCESS.getMessage(), data);
+        Result<T> result = new Result<>();
+        result.setCode(ResultCode.SUCCESS.getCode());
+        result.setMessage(ResultCode.SUCCESS.getMessage());
+        result.setData(data);
+        result.setTimestamp(System.currentTimeMillis());
+        return result;
     }
 
     public static <T> Result<T> error(ResultCode resultCode) {
-        return new Result<>(resultCode.getCode(),
-                resultCode.getMessage(), null);
+        return error(resultCode, null, null);
     }
 
-    public static <T> Result<T> error(ResultCode resultCode, String message) {
-        return new Result<>(resultCode.getCode(), message, null);
+    public static <T> Result<T> error(ResultCode resultCode, String detail) {
+        return error(resultCode, detail, null);
+    }
+
+    public static <T> Result<T> error(ResultCode resultCode, String detail, T data) {
+        Result<T> result = new Result<>();
+        result.setCode(resultCode.getCode());
+        result.setMessage(resultCode.getMessage());
+        result.setDetail(detail);
+        result.setData(data);
+        result.setTimestamp(System.currentTimeMillis());
+        return result;
     }
 }

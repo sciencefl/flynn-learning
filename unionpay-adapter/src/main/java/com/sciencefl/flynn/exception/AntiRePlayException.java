@@ -8,8 +8,12 @@ public class AntiRePlayException  extends BaseException {
         super(ResultCode.ANTI_REPLAY_ERROR);
     }
 
-    public AntiRePlayException(Object... args) {
-        super(ResultCode.ANTI_REPLAY_ERROR, args);
+    public AntiRePlayException(String detail) {
+        super(ResultCode.ANTI_REPLAY_ERROR, detail);
+    }
+
+    public AntiRePlayException(String detail, Object data) {
+        super(ResultCode.ANTI_REPLAY_ERROR, detail, data);
     }
 
     public AntiRePlayException(Throwable cause) {

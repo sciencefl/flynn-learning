@@ -7,8 +7,12 @@ public class BusinessException extends BaseException {
         super(resultCode);
     }
 
-    public BusinessException(ResultCode resultCode, Object... args) {
-        super(resultCode, args);
+    public BusinessException(ResultCode resultCode, String detail) {
+        super(resultCode, detail);
+    }
+
+    public BusinessException(ResultCode resultCode, String detail, Object data) {
+        super(resultCode, detail, data);
     }
 
     public BusinessException(ResultCode resultCode, Throwable cause) {

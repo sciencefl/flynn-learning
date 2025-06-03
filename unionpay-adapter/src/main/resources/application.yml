@@ -86,7 +86,7 @@ sa-token:
   # 多人登录时是否共用一个token
   is-share: false
   # 是否输出操作日志
-  is-log: true
+  is-log: false
   # jwt秘钥
 
   jwt-secret-key: unionpay@2024#secretkey

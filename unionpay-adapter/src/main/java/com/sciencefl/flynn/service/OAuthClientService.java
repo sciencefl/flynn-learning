@@ -3,6 +3,7 @@ package com.sciencefl.flynn.service;
 import cn.hutool.core.lang.UUID;
 import com.sciencefl.flynn.dao.OauthClientDao;
 import com.sciencefl.flynn.dao.entity.UnionPayOauthClient;
+import com.sciencefl.flynn.exception.DataAccessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -77,8 +78,12 @@ public class OAuthClientService {
 
     @Cacheable(cacheNames = "oauth_clients", key = "#clientId")
     public UnionPayOauthClient getClientById(String clientId) {
-        return oauthClientDao.lambdaQuery()
-                .eq(UnionPayOauthClient::getClientId, clientId)
-                .one();
+        try {
+            return oauthClientDao.lambdaQuery()
+                    .eq(UnionPayOauthClient::getClientId, clientId)
+                    .one();
+        } catch (Exception e) {
+            throw new DataAccessException("获取客户端信息失败: " + e.getMessage());
+        }
     }
 }

@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -42,7 +43,7 @@ public class BatchController {
             String jsonStr = JSONUtil.toJsonStr(baseDTO.getData());
             dataList = JSONUtil.toList(jsonStr, ApplyDTO.class);
         } catch (Exception e) {
-            throw new ValidationException("数据格式转换失败");
+            throw new ValidationException("数据格式转换失败："+e.getMessage());
         }
 
         if (dataList == null || dataList.isEmpty()) {
@@ -62,7 +63,8 @@ public class BatchController {
                 producerService.sendToTopicB(applyDTO);
             }
         } catch (Exception e) {
-            throw new BusinessException(ResultCode.BUSINESS_ERROR, "消息发送失败: " + e.getMessage());
+            throw new BusinessException(ResultCode.BUSINESS_ERROR, "消息发送失败: " + e.getMessage(),
+                    Map.of("data", dataList));
         }
 
         return Result.success("处理成功");

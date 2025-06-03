@@ -13,7 +13,15 @@ public class SecurityException extends BaseException {
         super(resultCode);
     }
 
-    public SecurityException(ResultCode resultCode, Object... args) {
-        super(resultCode, args);
+    public SecurityException(ResultCode resultCode, String detail) {
+        super(resultCode, detail);
+    }
+
+    public SecurityException(ResultCode resultCode, String detail, Object data) {
+        super(resultCode, detail, data);
+    }
+
+    public SecurityException(ResultCode resultCode, Throwable cause) {
+        super(resultCode, cause);
     }
 }

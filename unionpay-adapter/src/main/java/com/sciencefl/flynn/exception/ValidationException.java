@@ -8,7 +8,7 @@ public class ValidationException extends BaseException {
         super(ResultCode.PARAM_ERROR, message);
     }
 
-    public ValidationException(Object... args) {
-        super(ResultCode.PARAM_ERROR, args);
+    public ValidationException(String message, Object data) {
+        super(ResultCode.PARAM_ERROR, message, data);
     }
 }

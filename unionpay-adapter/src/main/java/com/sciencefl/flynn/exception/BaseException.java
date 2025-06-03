@@ -6,17 +6,34 @@ import lombok.Getter;
 @Getter
 public abstract class BaseException extends RuntimeException {
     private final ResultCode resultCode;
-    private final Object[] args;
+    private final String detail;
+    private final Object data;
 
-    public BaseException(ResultCode resultCode, Object... args) {
+    protected BaseException(ResultCode resultCode) {
         super(resultCode.getMessage());
         this.resultCode = resultCode;
-        this.args = args;
+        this.detail = null;
+        this.data = null;
     }
 
-    public BaseException(ResultCode resultCode, Throwable cause) {
+    protected BaseException(ResultCode resultCode, String detail) {
+        super(detail != null ? detail : resultCode.getMessage());
+        this.resultCode = resultCode;
+        this.detail = detail;
+        this.data = null;
+    }
+
+    protected BaseException(ResultCode resultCode, String detail, Object data) {
+        super(detail != null ? detail : resultCode.getMessage());
+        this.resultCode = resultCode;
+        this.detail = detail;
+        this.data = data;
+    }
+
+    protected BaseException(ResultCode resultCode, Throwable cause) {
         super(resultCode.getMessage(), cause);
         this.resultCode = resultCode;
-        this.args = new Object[0];
+        this.detail = cause.getMessage();
+        this.data = null;
     }
 }

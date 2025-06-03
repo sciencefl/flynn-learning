@@ -54,6 +54,10 @@
     <logger name="com.sciencefl.flynn.controller.BatchController" level="INFO" additivity="true">
         <appender-ref ref="UNION_PAY_REQUEST_FILE"/>
     </logger>
+    <!-- 设置 Sa-Token 相关包的日志级别 -->
+    <logger name="cn.dev33" level="INFO" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+    </logger>
 
 <!--    "java -jar app.jar &#45;&#45;spring.profiles.active=prod"-->
     <!-- 生产环境专用配置 -->
