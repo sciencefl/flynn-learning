@@ -4,7 +4,6 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.exception.NotPermissionException;
 import com.sciencefl.flynn.common.Result;
 import com.sciencefl.flynn.common.ResultCode;
-import io.jsonwebtoken.JwtException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -59,13 +58,6 @@ import java.util.stream.Collectors;
         public Result<?> handleDataAccessException(DataAccessException ex) {
             log.error("数据库访问异常", ex);
             return Result.error(ResultCode.DATABASE_ERROR, "数据库访问异常");
-        }
-
-        @ExceptionHandler(JwtException.class)
-        @ResponseStatus(HttpStatus.UNAUTHORIZED)
-        public Result<?> handleJwtException(JwtException ex) {
-            log.warn("JWT令牌异常: {}", ex.getMessage());
-            return Result.error(ResultCode.INVALID_TOKEN, "无效的认证令牌");
         }
 
         @ExceptionHandler(Exception.class)

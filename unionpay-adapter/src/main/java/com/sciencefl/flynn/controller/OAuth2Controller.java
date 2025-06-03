@@ -15,7 +15,8 @@ import java.util.Map;
 
 @Slf4j
 @RestController
-@RequestMapping("/oauth2")
+// @RequestMapping("/oauth2")
+@RequestMapping("/api/v1/ssc/oauth2")
 public class OAuth2Controller {
     @Autowired
     private OAuthClientService clientService;
