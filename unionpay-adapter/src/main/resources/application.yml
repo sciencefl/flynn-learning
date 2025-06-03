@@ -63,22 +63,12 @@ rocketmq:
     pull-batch-size: 32 # 批量拉取[4](@ref)
     access-key: admin  # RocketMQ Access Key
     secret-key: 123456 # RocketMQ
-app:
-  jwt:
-    secret: unionpay@2024#secretkey
-    expiration-ms: 3600000
-
-  api-keys:
-    - app-name: union-pay
-      api-key: 123456
-      scopes:
-        - push_batchdata
 sa-token:
   # 修改token风格为jwt
   token-style: jwt
   # token名称
   token-name: Authorization
-  # token有效期
+  # token有效期 2小时
   timeout: 7200
   # token临时有效期
   # 是否允许同一账号多地同时登录
