@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Base64;
 
 @Component
-public class ClientSecretEncoder {
+public class OauthClientSecretEncoder {
     private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
     private static final int ITERATIONS = 10000;
     private static final int KEY_LENGTH = 256;

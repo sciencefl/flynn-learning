@@ -2,11 +2,13 @@ package com.sciencefl.flynn.dao.entity;
 
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
+@Builder
 @Data
 @TableName("union_pay_apply")
 public class UnionPayApply {

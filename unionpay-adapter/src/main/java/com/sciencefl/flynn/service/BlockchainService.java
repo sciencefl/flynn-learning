@@ -1,5 +1,6 @@
 package com.sciencefl.flynn.service;
 
+import com.sciencefl.flynn.dto.ApplyDTO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -7,7 +8,28 @@ import org.springframework.stereotype.Service;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ContractService {
+public class BlockchainService {
+
+    public void  processMessage(ApplyDTO applyDTO, String messageType) {
+        // 根据消息类型调用不同的区块链合约方法
+//        switch (messageType) {
+//            case MessageTypeConstants.APPLY:
+//                apply(applyDTO);
+//                break;
+//            case MessageTypeConstants.USE:
+//                use(applyDTO);
+//                break;
+//            case MessageTypeConstants.REFUND:
+//                refund(applyDTO);
+//                break;
+//            case MessageTypeConstants.RETURN:
+//                returnCoupon(applyDTO);
+//                break;
+//            default:
+//                log.warn("未知消息类型: {}", messageType);
+//        }
+
+    }
 //    private final Web3j web3j;
 //    private final Credentials credentials;
 //    private final ContractGasProvider gasProvider;

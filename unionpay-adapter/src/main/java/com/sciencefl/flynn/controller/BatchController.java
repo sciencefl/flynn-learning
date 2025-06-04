@@ -3,6 +3,7 @@ package com.sciencefl.flynn.controller;
 
 import cn.hutool.json.JSONUtil;
 import com.sciencefl.flynn.aspect.AntiReplay;
+import com.sciencefl.flynn.common.MessageTypeConstants;
 import com.sciencefl.flynn.common.Result;
 import com.sciencefl.flynn.common.ResultCode;
 import com.sciencefl.flynn.dto.ApplyDTO;
@@ -60,7 +61,7 @@ public class BatchController {
 
         try {
             for (ApplyDTO applyDTO : dataList) {
-                producerService.sendToTopicB(applyDTO);
+                producerService.sendMessage(applyDTO, MessageTypeConstants.APPLY);
             }
         } catch (Exception e) {
             throw new BusinessException(ResultCode.BUSINESS_ERROR, "消息发送失败: " + e.getMessage(),

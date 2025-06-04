@@ -24,7 +24,7 @@
         <mybatis-plus.version>3.5.12</mybatis-plus.version>
         <!-- 消息队列 -->
         <redis.version>3.0.0</redis.version>
-        <rocketmq.version>2.2.3</rocketmq.version>
+        <rocketmq.version>2.3.3</rocketmq.version>
         <!-- 开发工具 -->
         <lombok.version>1.18.28</lombok.version>
         <!-- 工具包 -->

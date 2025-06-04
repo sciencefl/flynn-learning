@@ -22,7 +22,7 @@ public class OAuthClientService {
     private OauthClientDao oauthClientDao;
 
     @Autowired
-    private ClientSecretEncoder secretEncoder;
+    private OauthClientSecretEncoder secretEncoder;
 
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;

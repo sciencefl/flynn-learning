@@ -51,18 +51,36 @@ rocketmq:
   name-server: 127.0.0.1:9876;127.0.0.1:9877 # RocketMQ NameServer地址
   producer:
     group: union-pay-producer-group # 生产者组名称
-    send-message-timeout: 3000 # 发送消息超时时间
+    send-message-timeout: 5000 # 发送消息超时时间
     retry-times-when-send-failed: 3 # 失败重试
     max-message-size: 4194304 # 4MB
     access-key: admin  # RocketMQ Access Key
-    secret-key: 123456 # RocketMQ
+    secret-key: 123456 # RocketMQ Secret Key
+  # 数据库消费者组配置
   consumer:
-    group: union-pay-consumer-group # 消费者组名称
-    topic: union-pay-topic # 消费主题
-    message-model: CLUSTERING # 消息模型
-    pull-batch-size: 32 # 批量拉取[4](@ref)
-    access-key: admin  # RocketMQ Access Key
-    secret-key: 123456 # RocketMQ
+    database:
+      group: union-pay-db-consumer-group # 消费者组名称
+      topic: union-pay-topic # 消费主题
+      message-model: CLUSTERING # 消息模型
+      max-reconsume-times: 3 # 最大重试次数
+      pull-batch-size: 32 # 批量拉取最带数量
+      access-key: admin # RocketMQ Access Key
+      secret-key: 123456 # RocketMQ Secret Key
+
+  # 区块链消费者组配置
+    blockchain:
+      group: union-pay-blockchain-consumer-group # 消费者组名称
+      topic: union-pay-topic-2 # 消费主题
+      message-model: CLUSTERING # 消息模型
+      max-reconsume-times: 3 # 最大重试次数
+      pull-batch-size: 32 # 批量拉取最带数量
+      access-key: admin # RocketMQ Access Key
+      secret-key: 123456 # RocketMQ Secret Key
+  # 死信队列配置
+  dlq:
+    topic: "%DLQ%union-pay-topic" # 死信队列主题名称
+    group: union-pay-dlq-group # 死信队列消费者组名称
+
 sa-token:
   # 修改token风格为jwt
   token-style: jwt
