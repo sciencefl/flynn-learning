@@ -57,6 +57,16 @@ public class OAuthClientService {
         }
         return secretEncoder.matches(clientSecret, client.getClientSecret());
     }
+    public UnionPayOauthClient validateClientAndScope(String clientId, String clientSecret,String scope) {
+        UnionPayOauthClient client = getClientById(clientId);
+        if (client == null || !client.getEnabled()) {
+            return null;
+        }
+        if(secretEncoder.matches(clientSecret, client.getClientSecret()) && (scope == null || client.getScopes().contains(scope))) {
+            return client;
+        }
+        return null;
+    }
 
     private String generateClientId() {
         return UUID.randomUUID().toString().replace("-", "");

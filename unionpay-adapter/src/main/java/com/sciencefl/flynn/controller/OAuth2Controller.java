@@ -40,24 +40,26 @@ public class OAuth2Controller {
     @PostMapping("/token")
     public Result<Map<String, String>> getToken(
             @RequestParam String clientId,
-            @RequestParam String clientSecret) {
-        if (!clientService.validateClient(clientId, clientSecret)) {
-            throw new SecurityException(ResultCode.UNAUTHORIZED, "Invalid client credentials");
+            @RequestParam String clientSecret,
+            @RequestParam(required = false) String scope) {
+        UnionPayOauthClient client = clientService.validateClientAndScope(clientId, clientSecret,scope);
+        if (client == null) {
+            throw new SecurityException(ResultCode.UNAUTHORIZED, "Invalid client");
         }
 
+        // 创建session并登录
         StpUtil.login(clientId);
 
-        // 获取token信息
-        String tokenValue = StpUtil.getTokenValue();
-        long timeout = StpUtil.getTokenTimeout();
+        // 在session中存储客户端信息
+        StpUtil.getSessionByLoginId(clientId).set("client_info", client);
+        StpUtil.getSessionByLoginId(clientId).set("scopes", client.getScopes());
 
-        Map<String, String> response = Map.of(
+        String tokenValue = StpUtil.getTokenValue();
+        return Result.success(Map.of(
                 "access_token", tokenValue,
                 "token_type", "Bearer",
-                "expires_in", String.valueOf(timeout)
-        );
-
-        log.info("Generated JWT token for client: {}", clientId);
-        return Result.success(response);
+                "expires_in", String.valueOf(StpUtil.getTokenTimeout()),
+                "scope", String.join(" ", client.getScopes())
+        ));
     }
 }

@@ -1,6 +1,6 @@
 # 应用基础配置
 server:
-  port: 8080
+  port: 8081
   servlet:
     encoding:
       charset: UTF-8
@@ -30,13 +30,17 @@ spring:
           max-idle: 1000 # 连接池中的最大空闲连接 默认 8
           min-idle: 0 # 连接池中的最小空闲连接 默认 0
 mybatis-plus:
+  type-handlers-package: com.baomidou.mybatisplus.extension.handlers
   mapper-locations: classpath:/mapper/*.xml
   global-config:
       db-config:
         id-type: auto
   type-aliases-package: com.sciencefl.flynn.entity
   configuration:
+    default-enum-type-handler: org.apache.ibatis.type.EnumTypeHandler
     map-underscore-to-camel-case: true
+#    # 开启 JacksonTypeHandler
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 #
 ## 自定义配置
@@ -83,7 +87,7 @@ rocketmq:
 
 sa-token:
   # 修改token风格为jwt
-  token-style: jwt
+  token-style: random-32
   # token名称
   token-name: Authorization
   # token有效期 2小时
@@ -95,6 +99,7 @@ sa-token:
   is-share: false
   # 是否输出操作日志
   is-log: false
+  # 是否从cookie中读取token
+  isReadCookie: false
   # jwt秘钥
-
   jwt-secret-key: unionpay@2024#secretkey

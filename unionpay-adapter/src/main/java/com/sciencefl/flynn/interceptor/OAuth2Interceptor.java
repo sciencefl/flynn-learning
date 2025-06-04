@@ -12,6 +12,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -48,10 +49,43 @@ public class OAuth2Interceptor implements HandlerInterceptor {
             if (client == null || !client.getEnabled()) {
                 throw new SecurityException(ResultCode.UNAUTHORIZED, "Invalid client");
             }
+            // 从session获取scope信息
+            List<String> scopes = client.getScopes();
 
+            // 验证接口所需scope
+            String requiredScope = getRequiredScope(request.getRequestURI());
+            if (requiredScope != null && !hasRequiredScope(scopes, requiredScope)) {
+                throw new SecurityException(ResultCode.FORBIDDEN, "Insufficient scope: " + requiredScope);
+            }
             return true;
         } finally {
             redisTemplate.delete(lockKey);
         }
+    }
+    private String getRequiredScope(String uri) {
+        // 基于URI路径匹配所需的scope权限
+        if (uri.startsWith("/api/v1/ssc/batches")) {
+            return "push_batch_data";
+        } else if (uri.startsWith("/api/v1/ssc/oauth2/client")) {
+            return "manage_clients";
+        }
+        // 没有特殊scope要求的接口返回null
+        return null;
+    }
+
+    private boolean hasRequiredScope(List<String> grantedScopes, String requiredScope) {
+        // 检查授权列表为空的情况
+        if (grantedScopes == null || grantedScopes.isEmpty()) {
+            return false;
+        }
+
+        // 检查是否包含所需scope
+        // 1. 检查是否有all权限
+        if (grantedScopes.contains("all")) {
+            return true;
+        }
+
+        // 2. 检查具体权限
+        return grantedScopes.contains(requiredScope);
     }
 }

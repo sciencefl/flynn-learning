@@ -23,7 +23,6 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addInterceptor(oAuth2Interceptor)
                 .addPathPatterns("/**")  // 拦截所有路径
                 .excludePathPatterns(
-                        "/api/v1/ssc/oauth2/client",     // 排除创建客户端接口
                         "/api/v1/ssc/oauth2/token"       // 排除获取token接口
                 )
                 .order(2);  // 设置优先级为2，在日志拦截器之后执行
