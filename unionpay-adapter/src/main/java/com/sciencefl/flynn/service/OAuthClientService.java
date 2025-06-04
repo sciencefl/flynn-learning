@@ -57,12 +57,12 @@ public class OAuthClientService {
         }
         return secretEncoder.matches(clientSecret, client.getClientSecret());
     }
-    public UnionPayOauthClient validateClientAndScope(String clientId, String clientSecret,String scope) {
+    public UnionPayOauthClient validateClientAndScope(String clientId, String clientSecret) {
         UnionPayOauthClient client = getClientById(clientId);
         if (client == null || !client.getEnabled()) {
             return null;
         }
-        if(secretEncoder.matches(clientSecret, client.getClientSecret()) && (scope == null || client.getScopes().contains(scope))) {
+        if(secretEncoder.matches(clientSecret, client.getClientSecret())) {
             return client;
         }
         return null;

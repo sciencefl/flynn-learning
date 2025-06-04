@@ -5,11 +5,16 @@ import com.sciencefl.flynn.common.Result;
 import com.sciencefl.flynn.common.ResultCode;
 import com.sciencefl.flynn.dao.entity.UnionPayOauthClient;
 import com.sciencefl.flynn.dto.CreateClientRequest;
+import com.sciencefl.flynn.dto.TokenRequest;
 import com.sciencefl.flynn.exception.SecurityException;
 import com.sciencefl.flynn.service.OAuthClientService;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Map;
 
@@ -38,14 +43,12 @@ public class OAuth2Controller {
     }
 
     @PostMapping("/token")
-    public Result<Map<String, String>> getToken(
-            @RequestParam String clientId,
-            @RequestParam String clientSecret,
-            @RequestParam(required = false) String scope) {
-        UnionPayOauthClient client = clientService.validateClientAndScope(clientId, clientSecret,scope);
+    public Result<Map<String, String>> getToken(@Valid @RequestBody TokenRequest request) {
+        UnionPayOauthClient client = clientService.validateClientAndScope(request.getClientId(), request.getClientSecret());
         if (client == null) {
             throw new SecurityException(ResultCode.UNAUTHORIZED, "Invalid client");
         }
+        String clientId = client.getClientId();
 
         // 创建session并登录
         StpUtil.login(clientId);
