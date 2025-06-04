@@ -18,6 +18,9 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class OAuthClientService {
+
+    private static final String CLIENT_CACHE_KEY = "oauth:client:";
+    private static final long CACHE_DURATION = 3600; // 1小时
     @Autowired
     private OauthClientDao oauthClientDao;
 
@@ -27,8 +30,6 @@ public class OAuthClientService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    private static final String CLIENT_CACHE_KEY = "oauth:client:";
-    private static final long CACHE_DURATION = 3600; // 1小时
 
     public UnionPayOauthClient createClient(String clientName, List<String> scopes) {
         String clientId = generateClientId();
@@ -79,9 +80,7 @@ public class OAuthClientService {
     @Cacheable(cacheNames = "oauth_clients", key = "#clientId")
     public UnionPayOauthClient getClientById(String clientId) {
         try {
-            return oauthClientDao.lambdaQuery()
-                    .eq(UnionPayOauthClient::getClientId, clientId)
-                    .one();
+            return oauthClientDao.lambdaQuery().eq(UnionPayOauthClient::getClientId, clientId).one();
         } catch (Exception e) {
             throw new DataAccessException("获取客户端信息失败: " + e.getMessage());
         }

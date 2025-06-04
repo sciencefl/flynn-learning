@@ -1,13 +1,17 @@
 package com.sciencefl.flynn.config;
 
+import cn.dev33.satoken.dao.SaTokenDao;
 import cn.dev33.satoken.jwt.StpLogicJwtForSimple;
 import cn.dev33.satoken.oauth2.logic.SaOAuth2Template;
 import cn.dev33.satoken.oauth2.model.SaClientModel;
 import cn.dev33.satoken.stp.StpLogic;
+import com.sciencefl.flynn.dao.SaRedisDao;
 import com.sciencefl.flynn.service.OAuthClientService;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.RedisTemplate;
 
 @Configuration
 public class SaTokenConfig {
@@ -41,5 +45,9 @@ public class SaTokenConfig {
                         : null;
             }
         };
+    }
+    @Bean
+    public SaTokenDao saTokenDao(@Qualifier("saTokenRedisTemplate")RedisTemplate<String, Object> redisTemplate) {
+        return new SaRedisDao(redisTemplate);
     }
 }
