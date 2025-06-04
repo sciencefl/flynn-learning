@@ -65,7 +65,7 @@ public class OAuth2Interceptor implements HandlerInterceptor {
     private String getRequiredScope(String uri) {
         // 基于URI路径匹配所需的scope权限
         if (uri.startsWith("/api/v1/ssc/batches")) {
-            return "push_batch_data";
+            return "push_batchdata";
         } else if (uri.startsWith("/api/v1/ssc/oauth2/client")) {
             return "manage_clients";
         }

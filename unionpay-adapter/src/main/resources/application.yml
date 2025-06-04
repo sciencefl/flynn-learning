@@ -1,6 +1,6 @@
 # 应用基础配置
 server:
-  port: 8081
+  port: 8080
   servlet:
     encoding:
       charset: UTF-8
@@ -74,7 +74,7 @@ rocketmq:
   # 区块链消费者组配置
     blockchain:
       group: union-pay-blockchain-consumer-group # 消费者组名称
-      topic: union-pay-topic-2 # 消费主题
+      topic: union-pay-topic # 消费主题
       message-model: CLUSTERING # 消息模型
       max-reconsume-times: 3 # 最大重试次数
       pull-batch-size: 32 # 批量拉取最带数量

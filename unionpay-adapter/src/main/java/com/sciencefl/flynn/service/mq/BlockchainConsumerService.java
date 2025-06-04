@@ -1,21 +1,18 @@
 package com.sciencefl.flynn.service.mq;
 
-import com.sciencefl.flynn.common.message.BaseMessage;
-import com.sciencefl.flynn.dto.ApplyDTO;
 import com.sciencefl.flynn.service.BlockchainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.common.message.MessageExt;
 import org.apache.rocketmq.spring.annotation.ConsumeMode;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
 import org.apache.rocketmq.spring.core.RocketMQPushConsumerLifecycleListener;
-import org.slf4j.MDC;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
@@ -26,7 +23,7 @@ import java.util.concurrent.TimeUnit;
         consumeMode = ConsumeMode.ORDERLY,    // 设置顺序消费模式
         maxReconsumeTimes = 3
 )
-public class BlockchainConsumerService implements RocketMQListener<BaseMessage<ApplyDTO>>,
+public class BlockchainConsumerService implements RocketMQListener<MessageExt>,
         RocketMQPushConsumerLifecycleListener {
 
     private final RedisTemplate<String, String> redisTemplate;
@@ -34,34 +31,35 @@ public class BlockchainConsumerService implements RocketMQListener<BaseMessage<A
     private final BlockchainService blockchainService;
 
     @Override
-    public void onMessage(BaseMessage<ApplyDTO> message) {
-        String messageId = message.getMessageId();
-        String businessId = message.getBusinessId();
-        String processKey = String.format("mq:blockchain:consumed:processing:%s", messageId);
-        String successKey = String.format("mq:blockchain:consumed:success:%s", messageId);
-
-        MDC.put("traceId", message.getTraceId());
-        try {
-            // 幂等性检查
-            String consumeKey = String.format("mq:blockchain:consumed:%s", messageId);
-            if (!redisTemplate.opsForValue().setIfAbsent(consumeKey, "1", 24, TimeUnit.HOURS)) {
-                log.info("消息已处理,跳过: messageId={}, businessId={}", messageId, businessId);
-                return;
-            }
-
-            // 调用区块链服务处理
-            ApplyDTO data = message.getData();
-            blockchainService.processMessage(data, message.getMessageType());
-
-            log.info("区块链消费成功: messageId={}, businessId={}", messageId, businessId);
-
-        } catch (Exception e) {
-            log.error("区块链消费失败: messageId={}, businessId={}", messageId, businessId, e);
-            // 抛出异常以触发重试
-            throw new RuntimeException("区块链消费失败", e);
-        } finally {
-            MDC.remove("traceId");
-        }
+    public void onMessage(MessageExt messageExt) {
+        log.info("blockchain consumer 开始消费：{},id:{}",messageExt.getQueueOffset(),messageExt.getMsgId());
+//        String messageId = message.getMessageId();
+//        String businessId = message.getBusinessId();
+//        String processKey = String.format("mq:blockchain:consumed:processing:%s", messageId);
+//        String successKey = String.format("mq:blockchain:consumed:success:%s", messageId);
+//
+//        MDC.put("traceId", message.getTraceId());
+//        try {
+//            // 幂等性检查
+//            String consumeKey = String.format("mq:blockchain:consumed:%s", messageId);
+//            if (!redisTemplate.opsForValue().setIfAbsent(consumeKey, "1", 24, TimeUnit.HOURS)) {
+//                log.info("消息已处理,跳过: messageId={}, businessId={}", messageId, businessId);
+//                return;
+//            }
+//
+//            // 调用区块链服务处理
+//            ApplyDTO data = message.getData();
+//            blockchainService.processMessage(data, message.getMessageType());
+//
+//            log.info("区块链消费成功: messageId={}, businessId={}", messageId, businessId);
+//
+//        } catch (Exception e) {
+//            log.error("区块链消费失败: messageId={}, businessId={}", messageId, businessId, e);
+//            // 抛出异常以触发重试
+//            throw new RuntimeException("区块链消费失败", e);
+//        } finally {
+//            MDC.remove("traceId");
+//        }
     }
 
     @Override
