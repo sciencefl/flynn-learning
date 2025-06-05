@@ -88,7 +88,7 @@ public class DatabaseConsumerService implements RocketMQListener<MessageExt> , R
             if (Boolean.FALSE.equals(redisTemplate.opsForValue().setIfAbsent(processKey,
                     String.valueOf(retryTimes), 5, TimeUnit.MINUTES))) {
                 log.warn("消息正在处理中,等待重试,messageId={}, retryTimes={}",messageId, retryTimes);
-                throw new RuntimeException("消息正在处理中");
+                throw new RuntimeException("数据库消息正在处理中");
             }
 
             // 处理消息
@@ -99,7 +99,7 @@ public class DatabaseConsumerService implements RocketMQListener<MessageExt> , R
             log.info("消息处理成功,messageID:{}, retryTimes={}",messageId,retryTimes);
 
         } catch (Exception e) {
-            log.error("数据库消费失败: messageId={},retryTimes={}", message.getMessageId(),retryTimes, e);;
+            log.error("数据库消费失败: messageId={},retryTimes={},error:{}", message.getMessageId(),retryTimes, e.getMessage());;
             redisTemplate.delete(processKey);  // 释放处理锁
             throw new RuntimeException("消息处理失败", e);
         }

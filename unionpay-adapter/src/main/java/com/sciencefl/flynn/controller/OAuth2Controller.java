@@ -38,7 +38,7 @@ public class OAuth2Controller {
                 "clientSecret", client.getClientSecret() // 仅在创建时返回
         );
 
-        log.info("Created new OAuth client: {}", client.getClientId());
+        log.info("[OAuth] Client created - clientId:{}, name:{}, scopes:{}", client.getClientId(), client.getClientName(), client.getScopes());
         return Result.success(response);
     }
 

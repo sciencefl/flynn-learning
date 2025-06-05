@@ -35,8 +35,8 @@ public class UnionPayMessageProcessingAspect {
 
         } catch (Exception e) {
             // 记录失败指标
-            log.error("消息处理异常: class={}, messageId={}, error={}",
-                    className, messageId, e.getMessage(), e);
+            log.error("消息处理异常: class={}, messageId={}, error={},time={}",
+                    className, messageId, e.getMessage(), e.getMessage(),System.currentTimeMillis() - startTime);
             throw e;
         }
     }

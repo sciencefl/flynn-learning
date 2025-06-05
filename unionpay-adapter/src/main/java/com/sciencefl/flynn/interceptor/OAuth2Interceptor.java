@@ -7,14 +7,15 @@ import com.sciencefl.flynn.exception.SecurityException;
 import com.sciencefl.flynn.service.OAuthClientService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Component
 public class OAuth2Interceptor implements HandlerInterceptor {
     @Autowired
@@ -32,15 +33,17 @@ public class OAuth2Interceptor implements HandlerInterceptor {
 
         String token = auth.substring(7);
 
-        String lockKey = "oauth2:lock:" + token;
+//        String lockKey = "oauth2:lock:" + token;
         try {
-            // 使用分布式锁防止并发访问
-            boolean locked = redisTemplate.opsForValue().setIfAbsent(lockKey, "1", 10, TimeUnit.SECONDS);
-            if (!locked) {
-                throw new SecurityException(ResultCode.UNAUTHORIZED, "Token is being processed");
-            }
+//            //使用分布式锁防止并发访问
+//            boolean locked = redisTemplate.opsForValue().setIfAbsent(lockKey, "1", 10, TimeUnit.SECONDS);
+//            if (!locked) {
+//                throw new SecurityException(ResultCode.UNAUTHORIZED, "Token is being processed");
+//            }
+
             // 验证token
             String clientId = (String) StpUtil.getLoginIdByToken(token);
+            log.info("[OAuth] Request authorization - uri:{}, clientId:{}, method:{}", request.getRequestURI(), clientId, request.getMethod());
             if (clientId == null) {
                 throw new SecurityException(ResultCode.UNAUTHORIZED, "Invalid token");
             }
@@ -55,11 +58,15 @@ public class OAuth2Interceptor implements HandlerInterceptor {
             // 验证接口所需scope
             String requiredScope = getRequiredScope(request.getRequestURI());
             if (requiredScope != null && !hasRequiredScope(scopes, requiredScope)) {
+                log.info("[OAuth] Request authorization - uri:{}, clientId:{}, method:{}", request.getRequestURI(), clientId, request.getMethod());
                 throw new SecurityException(ResultCode.FORBIDDEN, "Insufficient scope: " + requiredScope);
             }
             return true;
-        } finally {
-            redisTemplate.delete(lockKey);
+        }catch (Exception e) {
+            throw e;
+        }
+        finally {
+//            redisTemplate.delete(lockKey);
         }
     }
     private String getRequiredScope(String uri) {

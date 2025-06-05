@@ -15,7 +15,7 @@ public class LogInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         String traceId = UUID.fastUUID().toString().substring(0,16); // 生成16位的UUID作为traceId
         MDC.put(TRACE_ID, traceId);  // 存入 MDC
-        log.info("Request started with traceId: {}", traceId);
+        log.info("[API] Request started - method:{}, uri:{}, clientIp:{}, traceId:{}", request.getMethod(), request.getRequestURI(), request.getRemoteAddr(), traceId);
         return true;
     }
 
