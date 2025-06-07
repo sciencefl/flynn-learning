@@ -19,7 +19,7 @@
         <module>cs-jvm</module>
         <module>cs-concurrence</module>
         <module>cs-netty</module>
-        <module>unionpay-adapter</module>
+        <module>union-pay-adapter</module>
     </modules>
 
 

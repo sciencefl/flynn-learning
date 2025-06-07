@@ -32,7 +32,7 @@ public class BlockchainConsumerService implements RocketMQListener<MessageExt>,
 
     @Override
     public void onMessage(MessageExt messageExt) {
-        // log.info("blockchain consumer 开始消费：{},id:{}",messageExt.getQueueOffset(),messageExt.getMsgId());
+         log.info("blockchain consumer 开始消费：{},id:{}",messageExt.getQueueOffset(),messageExt.getMsgId());
 //        String messageId = message.getMessageId();
 //        String businessId = message.getBusinessId();
 //        String processKey = String.format("mq:blockchain:consumed:processing:%s", messageId);
