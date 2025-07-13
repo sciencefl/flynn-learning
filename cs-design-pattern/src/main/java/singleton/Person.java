@@ -12,5 +12,6 @@ public class Person<T> {
     }
     public <E> E getValue(Class<E> clazz) throws InstantiationException, IllegalAccessException {
         return clazz.newInstance();
+
     }
 }
